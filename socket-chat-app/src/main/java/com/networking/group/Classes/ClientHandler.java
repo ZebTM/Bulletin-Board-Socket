@@ -14,6 +14,7 @@ public final class ClientHandler implements Runnable {
     Socket socket;
     BufferedReader bufferedReader;
     DataOutputStream outputStream;
+    User user;
 
     public ClientHandler(Socket socket) throws Exception
     {
@@ -102,21 +103,22 @@ public final class ClientHandler implements Runnable {
                     existingUser = new User();
                     existingUser.UserID = userID.UserID;
                     existingUser.connectionSocket = this.socket;
+                    // Add user to client handler and list of users
+                    this.user = existingUser;
                     WebServer.totalUsers.put(userID.UserID, existingUser);
 
                     sendResponse(200, null);
+                    break;
                 } catch (JsonSyntaxException exception) {
                     System.out.println(exception);
                     sendResponse(400, null);
                     break;
                 }
                 
-                
-
-                
-
-                break;
             case "join": 
+                Group mainGroup = WebServer.publicGroups.get(1);
+                mainGroup.AddUser(this.user);
+                mainGroup.SendMessageToUsers(new Message(UUID.randomUUID(), "New User", "Welcome"));
 
                 break;
             case "post":

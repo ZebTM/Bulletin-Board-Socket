@@ -35,7 +35,7 @@ public final class WebServer
         while (true) {
             // Listen for a TCP connection request.            
             Socket socket = serverSocket.accept(); 
-
+            socket.setKeepAlive(true);
             // Construct an object to process the Client Requests.
             ClientHandler request = new ClientHandler( socket );
             // Create a new thread to process the request.

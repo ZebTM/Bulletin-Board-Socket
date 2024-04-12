@@ -6,11 +6,13 @@ import com.google.gson.*;
 
 public class Message {
     public UUID Id;
+    public String Subject;
     public String Message;
     public Date Time; 
 
-    public Message(UUID id, String message) {
+    public Message(UUID id, String subject, String message) {
         Id = id;
+        Subject = subject;
         Message = message;
         Time = new Date();
     }
