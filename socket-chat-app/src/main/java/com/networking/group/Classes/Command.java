@@ -1,16 +1,8 @@
 package com.networking.group.Classes;
 
-public enum Command  {
-    Connect,
-    Join,
-    Post,
-    Users,
-    Leave,
-    Message,
-    Exit,
-    Groups,
-    GroupJoin,
-    GroupLeave,
-    GroupMessage,
-    None
+import java.util.List;
+
+public class Command {
+    public CommandOptions CommandOption;
+    public List<String> Arguments; 
 }

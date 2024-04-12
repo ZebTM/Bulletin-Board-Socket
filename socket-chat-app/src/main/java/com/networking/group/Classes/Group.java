@@ -3,15 +3,17 @@ package com.networking.group.Classes;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Group {
     public String Name;
-    private HashMap<String, User> Users;
-    private HashMap<UUID, Message> SentMessages;
+    private ConcurrentHashMap<String, User> Users;
+    private ConcurrentHashMap<UUID, Message> SentMessages;
 
     public Group(String name) {
         Name = name;
-        SentMessages = new HashMap<UUID, Message>();
+        SentMessages = new ConcurrentHashMap<UUID, Message>();
+        Users = new ConcurrentHashMap<String, User>();
     }
 
     public void AddUser(User user) {
