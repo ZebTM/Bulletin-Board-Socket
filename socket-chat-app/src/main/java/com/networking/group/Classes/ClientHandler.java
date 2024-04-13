@@ -12,15 +12,15 @@ import com.networking.group.WebServer;
 public final class ClientHandler implements Runnable {
     final static String CRLF = "\r\n";
     Socket socket;
-    BufferedReader bufferedReader;
-    DataOutputStream outputStream;
+    BufferedReader clientReader;
+    DataOutputStream clientWriter;
     User user;
 
     public ClientHandler(Socket socket) throws Exception
     {
         this.socket = socket;
-        this.bufferedReader = new BufferedReader( new InputStreamReader( socket.getInputStream() ));
-        this.outputStream = new DataOutputStream( socket.getOutputStream() );
+        this.clientReader = new BufferedReader( new InputStreamReader( socket.getInputStream() ));
+        this.clientWriter = new DataOutputStream( socket.getOutputStream() );
     }
     
     public void run() {
@@ -33,51 +33,48 @@ public final class ClientHandler implements Runnable {
 
     private void processRequest() throws Exception
     {
-        BufferedReader br = this.bufferedReader;
-        try {
-            HttpRequest request;
-            String requestLine;
-            if ((requestLine = br.readLine()) == null) {
-                return;
-            };
-            request = parseURL(br, requestLine);
-            // System.out.println(request.method);
-            
-            while (socket.isConnected()) {
-                switch (request.getMethod()) {
-                    case "POST":
-                        handlePost(request);
-                        break;
-                    case "GET":
-                        handleGet(request);
-                        break;
+        BufferedReader clientReader = this.clientReader;
+        DataOutputStream clientWriter = this.clientWriter;
 
-                    case "DELETE":
-                        handleDelete(request);
-                        break;
-                    default:
-                        System.out.println("METHOD NOT FOUND");
-                        break;
-                }
-                requestLine = null;
-            }
-        } catch (IOException exception) {
-            System.out.println(exception);
+        String userID = clientReader.readLine();
+        User existingUser = WebServer.totalUsers.get(userID); 
+        
+        while (existingUser != null) {
+            clientWriter.writeBytes("false" + CRLF);
+            userID = clientReader.readLine();
+            existingUser = WebServer.totalUsers.get(userID); 
+        } 
+        clientWriter.writeBytes("true" + CRLF);
+
+        
+
+        
+
+        while (socket.isConnected()) {
+            String commandInfo = clientReader.readLine();
+
+            // Get command and params
+            StringTokenizer tokens = new StringTokenizer(commandInfo);
+            String commandName = tokens.nextToken().toLowerCase();
+
+            switch (commandName) {
+
+                default:
+                    break;
+            } 
         }
+        
 
-        // Close All relevant sockets at end of session
-        this.outputStream.close();
-        br.close();
-        socket.close();
+        closeSocketAndStreams();
     }
 
     public void closeSocketAndStreams() {
         try {
-            if (this.outputStream != null) {
-                this.outputStream.close();
+            if (this.clientWriter != null) {
+                this.clientWriter.close();
             }
-            if (this.bufferedReader != null) {
-                this.bufferedReader.close();
+            if (this.clientReader != null) {
+                this.clientReader.close();
             }
             if (this.socket != null) {
                 this.socket.close();
@@ -164,7 +161,7 @@ public final class ClientHandler implements Runnable {
         }
         
 
-        DataOutputStream os = this.outputStream;
+        DataOutputStream os = this.clientWriter;
         try {
             os.writeBytes(statusLine);
             if (object != null) {
