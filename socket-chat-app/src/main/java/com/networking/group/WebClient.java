@@ -55,7 +55,7 @@ public class WebClient
                 command = tokenizer.nextToken().toUpperCase();
                 switch (command) {
                     case "CONNECT":
-
+                            
                         break;
                     case "EXIT":
 

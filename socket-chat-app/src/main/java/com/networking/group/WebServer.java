@@ -1,7 +1,7 @@
 package com.networking.group;
 // /**
-// * Assignment 1
-// * Zachary Brown
+// * Assignment 2
+// * Zachary Brown, Caleb Copley, Sam Puffer
 // **/
 
 import java.io.* ;
