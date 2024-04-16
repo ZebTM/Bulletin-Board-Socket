@@ -13,92 +13,166 @@ import java.util.StringTokenizer;
 public class WebClient 
 {
     final static String CRLF = "\r\n";
+    static Socket serverSocket;
+    static BufferedReader serverReader;
+    static DataOutputStream serverWriter;
+    static Boolean isConnected = false;
     public static void main( String[] args )
     {
         try {
-            Socket serverSocket = new Socket("localhost", 6789);
+            // Socket serverSocket = new Socket("localhost", 6789);
             // serverSocket.connect();
 
-            BufferedReader serverReader = new BufferedReader( new InputStreamReader( serverSocket.getInputStream() ));
-            DataOutputStream serverWriter = new DataOutputStream( serverSocket.getOutputStream() );
+            // 
 
             // Terminal reader to get user input
             BufferedReader terminalReader = new BufferedReader(new InputStreamReader(System.in));
             
-            System.out.println("Enter User ID: ");
-			String userID = terminalReader.readLine();
             
-
-            serverWriter.writeBytes(userID + CRLF);
-
-            String acceptedUsername = serverReader.readLine();
-            
-            
-            while (acceptedUsername.equals("true" + CRLF)) {
-                System.out.println("Sorry User ID is already taken \n");
-                System.out.println("Enter User ID: ");
-                userID = terminalReader.readLine();
-    
-                serverWriter.writeBytes(userID + CRLF);
-    
-                acceptedUsername = serverReader.readLine();
-            }
             
             String fullCommand;
             StringTokenizer tokenizer;
             String command;
-            while (serverSocket.isConnected()) {
+            Boolean active = true;
+            while (active) {
                 fullCommand = terminalReader.readLine() + CRLF;
 
                 tokenizer = new StringTokenizer(fullCommand);
                 command = tokenizer.nextToken().toUpperCase();
                 switch (command) {
                     case "/CONNECT":
-                        System.out.println("Enter server address: ");
-                        String serverAddress = terminalReader.readLine();
-                        System.out.println("Enter server port number: ");
-                        String serverPort = terminalReader.readLine();
-                        Integer number = Integer.valueOf(serverPort);
-                        Socket goofySocket = new Socket(serverAddress, number);
-                        connectServer(goofySocket);
+                        if (!isConnected) {
+                            System.out.println("Enter server address: ");
+                            String serverAddress = terminalReader.readLine();
+                            System.out.println("Enter server port number: ");
+                            String serverPort = terminalReader.readLine();
+                            Integer number = Integer.valueOf(serverPort);
+                            serverSocket = new Socket(serverAddress, number);
+                            // connectServer(goofySocket);
+
+                            serverReader = new BufferedReader( new InputStreamReader( serverSocket.getInputStream() ));
+                            serverWriter = new DataOutputStream( serverSocket.getOutputStream() );
+
+                            System.out.println("Enter User ID: ");
+                            String userID = terminalReader.readLine();
+                            
+
+                            serverWriter.writeBytes(userID + CRLF);
+
+                            String acceptedUsername = serverReader.readLine();
+                            
+                            
+                            while (acceptedUsername.equals("true" + CRLF)) {
+                                System.out.println("Sorry User ID is already taken \n");
+                                System.out.println("Enter User ID: ");
+                                userID = terminalReader.readLine();
+                    
+                                serverWriter.writeBytes(userID + CRLF);
+                    
+                                acceptedUsername = serverReader.readLine();
+                            }
+
+                            isConnected = true;
+                        } else {
+                            System.out.println("Please only connect to one server at a time");
+                        }
                         break;
                     case "/JOINPUBLIC":
-                        serverWriter.writeBytes("joinpublic" + CRLF);
+                        if (isConnected) {
+                            serverWriter.writeBytes("joinpublic" + CRLF);
+                        } else {
+                            System.out.println("Please connect before running any other commands");
+                        }
+                        
                         break;
                     case "/MAKEPOST":
-                        serverWriter.writeBytes("makepost" + CRLF);
+                        if (isConnected) {
+                            serverWriter.writeBytes("makepost" + CRLF);
+                            System.out.println("Please enter your subject");
+                            String subject = terminalReader.readLine();
+                            System.out.println("Please enter your message");
+                            String message = terminalReader.readLine();
+                            serverWriter.writeBytes(subject + CRLF);
+                            serverWriter.writeBytes(message + CRLF);
+                        } else {
+                            System.out.println("Please connect before running any other commands");
+                        }
+                        
                         break;
                     case "/VIEWUSERS":
-                        serverWriter.writeBytes("makepost" + CRLF);
+                        if (isConnected){
+                            serverWriter.writeBytes("viewusers" + CRLF);
+                        } else {
+                            System.out.println("Please connect before running any other commands");
+                        }
+
                         break;
                     case "/LEAVEPUBLIC":
-                        serverWriter.writeBytes("makepost" + CRLF);
+                        if (isConnected) {
+                            serverWriter.writeBytes("leavepublic" + CRLF);
+                        } else {
+                            System.out.println("Please connect before running any other commands");
+                        }
+
                         break;
                     case "/SEEMESSAGE":
-                        serverWriter.writeBytes("makepost" + CRLF);
+                        if (isConnected) {
+                            serverWriter.writeBytes("seemessage" + CRLF);
+                            System.out.println("Enter the message id");
+                            String messageId = terminalReader.readLine();
+                            serverWriter.writeBytes(messageId + CRLF);
+                        } else {
+                            System.out.println("Please connect before running any other commands");
+                        }
                         break;
                     case "/DISCONNECT":
-                        serverReader.close();
-                        serverWriter.close();
-                        serverSocket.close();
+                        if (isConnected) {
+                            serverReader.close();
+                            serverWriter.close();
+                            serverSocket.close();
+                        } else {
+                            System.out.println("Please connect before running any other commands");
+                        }
                         break;
                     case "/GROUPLIST":
-                        serverWriter.writeBytes("makepost" + CRLF);
+                        if (isConnected) {
+                            serverWriter.writeBytes("makepost" + CRLF);
+                        } else {
+                            System.out.println("Please connect before running any other commands");
+                        }
                         break;
                     case "/GROUPJOIN":
-                        serverWriter.writeBytes("makepost" + CRLF);
+                        if (isConnected) {
+                            serverWriter.writeBytes("makepost" + CRLF);
+                        } else {
+                            System.out.println("Please connect before running any other commands");
+                        }
                         break;
                     case "/GROUPPOST":
-                        serverWriter.writeBytes("makepost" + CRLF);
+                        if (isConnected) {
+                            serverWriter.writeBytes("makepost" + CRLF);
+                        } else {
+                            System.out.println("Please connect before running any other commands");
+                        }
                         break;
                     case "/GROUPUSERS":
-                        serverWriter.writeBytes("makepost" + CRLF);
+                        if (isConnected) {
+                            serverWriter.writeBytes("makepost" + CRLF);
+                        } else {
+                            System.out.println("Please connect before running any other commands");
+                        }
                         break;
                     case "/GROUPLEAVE":
-                        serverWriter.writeBytes("makepost" + CRLF);
+                        if (isConnected) {
+                            serverWriter.writeBytes("makepost" + CRLF);
+                        }   
                         break;
                     case "/GROUPSEEMESSAGE":
-                        serverWriter.writeBytes("groupseemessage" + CRLF);
+                        if (isConnected) {
+                            serverWriter.writeBytes("groupseemessage" + CRLF);
+                        } else {
+                            System.out.println("Please connect before running any other commands");
+                        }
                         break;
                     case "HELP":
                         helpClient();

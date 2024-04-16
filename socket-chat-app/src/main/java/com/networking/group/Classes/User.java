@@ -9,7 +9,6 @@ public class User {
     public String UserID;
     public Socket connectionSocket;
     final static String CRLF = "\r\n";
-    Socket socket;
 
     public void PublishMessageToUser(Message message) {
         // User will write message 

@@ -18,6 +18,10 @@ public class Group {
         Users.put(user.UserID, user);
     }
 
+    public Boolean IsUserInGroup(String userId) {
+        return Users.get(userId) != null;
+    }
+
     public void RemoveUser(String userId)
     {
         Users.remove(userId);

@@ -45,22 +45,31 @@ public final class ClientHandler implements Runnable {
             userID = clientReader.readLine();
             existingUser = WebServer.totalUsers.get(userID); 
         } 
+        existingUser = new User();
+        existingUser.UserID = userID;
+        existingUser.connectionSocket = this.socket;
         clientWriter.writeBytes("true" + CRLF);
-
+        WebServer.totalUsers.put(userID, existingUser);
+        this.user = existingUser;
         
 
         // Actual commands here
 
         while (socket.isConnected()) {
-            String commandInfo = clientReader.readLine();
+            String command = clientReader.readLine();
 
             // Get command and params
-            StringTokenizer tokens = new StringTokenizer(commandInfo);
-            String commandName = tokens.nextToken().toLowerCase();
 
-            switch (commandName) {
-                // case: "JOINPUBLIC":
-                //     String parseVarO = commandInfo
+            switch (command) {
+                case "joinpublic":
+                    WebServer.publicGroups.get(1).AddUser(this.user);
+                case "makepost":
+                    String subject = clientReader.readLine();
+                    String message = clientReader.readLine();
+                    Group publicGroup = WebServer.publicGroups.get(1);
+                    if (publicGroup.IsUserInGroup(user.UserID)) {
+                        publicGroup.SendMessageToUsers(new Message(UUID.randomUUID(), subject, message));
+                    };
                 default:
                     break;
             } 
