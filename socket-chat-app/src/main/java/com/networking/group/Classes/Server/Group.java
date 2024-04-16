@@ -1,5 +1,6 @@
-package com.networking.group.Classes;
+package com.networking.group.Classes.Server;
 
+import java.io.DataOutputStream;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -40,8 +41,10 @@ public class Group {
     }
 
     public void SendMessageToUsers(Message message) {
+        System.out.println(message);
         for (User user : Users.values()) {
             user.PublishMessageToUser(message);
+            
         }
     }
 }

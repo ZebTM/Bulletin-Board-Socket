@@ -1,10 +1,12 @@
-package com.networking.group;
+package com.networking.group.Client;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.StringTokenizer;
+
+import com.networking.group.Classes.Client.ReaderClientHelper;
 
 /**
  * Hello world!
@@ -17,15 +19,10 @@ public class WebClient
     static BufferedReader serverReader;
     static DataOutputStream serverWriter;
     static Boolean isConnected = false;
+    static Thread readerThread;
     public static void main( String[] args )
     {
         try {
-            // Socket serverSocket = new Socket("localhost", 6789);
-            // serverSocket.connect();
-
-            // 
-
-            // Terminal reader to get user input
             BufferedReader terminalReader = new BufferedReader(new InputStreamReader(System.in));
             
             
@@ -34,6 +31,7 @@ public class WebClient
             StringTokenizer tokenizer;
             String command;
             Boolean active = true;
+            helpClient();
             while (active) {
                 fullCommand = terminalReader.readLine() + CRLF;
 
@@ -71,8 +69,11 @@ public class WebClient
                     
                                 acceptedUsername = serverReader.readLine();
                             }
-
+                            System.out.println("User login succesful " + userID + "\n");
+                            readerThread = new Thread(new ReaderClientHelper(serverReader));
+                            readerThread.start();
                             isConnected = true;
+                            
                         } else {
                             System.out.println("Please only connect to one server at a time");
                         }
@@ -130,6 +131,7 @@ public class WebClient
                             serverReader.close();
                             serverWriter.close();
                             serverSocket.close();
+                            // readerThread;
                         } else {
                             System.out.println("Please connect before running any other commands");
                         }
@@ -178,10 +180,6 @@ public class WebClient
                         helpClient();
                         break;
                 }
-                
-                // System.out.println(tokenizer.nextToken());
-                // System.out.println(tokenizer.nextToken());
-                
             }
 
         } catch (Exception e) {
@@ -262,3 +260,5 @@ public class WebClient
         System.out.println("/groupSeeMessage - command followed by the group id/name and message ID to retrieve the content of the message posted earlier on a message board owned by a specific group.");
     }
 }
+
+

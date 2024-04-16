@@ -1,4 +1,4 @@
-package com.networking.group;
+package com.networking.group.Server;
 // /**
 // * Assignment 2
 // * Zachary Brown, Caleb Copley, Sam Puffer
@@ -8,6 +8,9 @@ import java.net.* ;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.networking.group.Classes.*;
+import com.networking.group.Classes.Server.ClientHandler;
+import com.networking.group.Classes.Server.Group;
+import com.networking.group.Classes.Server.User;
 public final class WebServer
 {
     public static ConcurrentHashMap<Integer, Group> publicGroups;
