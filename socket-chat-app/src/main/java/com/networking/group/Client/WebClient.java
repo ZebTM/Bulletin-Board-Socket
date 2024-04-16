@@ -138,35 +138,35 @@ public class WebClient
                         break;
                     case "/GROUPLIST":
                         if (isConnected) {
-                            serverWriter.writeBytes("makepost" + CRLF);
+                            serverWriter.writeBytes("grouplist" + CRLF);
                         } else {
                             System.out.println("Please connect before running any other commands");
                         }
                         break;
                     case "/GROUPJOIN":
                         if (isConnected) {
-                            serverWriter.writeBytes("makepost" + CRLF);
+                            serverWriter.writeBytes("groupjoin" + CRLF);
                         } else {
                             System.out.println("Please connect before running any other commands");
                         }
                         break;
                     case "/GROUPPOST":
                         if (isConnected) {
-                            serverWriter.writeBytes("makepost" + CRLF);
+                            serverWriter.writeBytes("grouppost" + CRLF);
                         } else {
                             System.out.println("Please connect before running any other commands");
                         }
                         break;
                     case "/GROUPUSERS":
                         if (isConnected) {
-                            serverWriter.writeBytes("makepost" + CRLF);
+                            serverWriter.writeBytes("groupusers" + CRLF);
                         } else {
                             System.out.println("Please connect before running any other commands");
                         }
                         break;
                     case "/GROUPLEAVE":
                         if (isConnected) {
-                            serverWriter.writeBytes("makepost" + CRLF);
+                            serverWriter.writeBytes("groupleave" + CRLF);
                         }   
                         break;
                     case "/GROUPSEEMESSAGE":
@@ -186,61 +186,6 @@ public class WebClient
             System.out.println(e.getStackTrace());
             
         }
-    }
-
-    // PUBLIC REQUIREMENTS //
-    static void connectServer(Socket serverSocket) {
-        // command followed by the address and port number of a running bulletin board server to connect to. 
-        System.out.println("Successfully connected to server :)");
-    }
-
-    static void joinPublic() {
-        // command to join the single message board  
-    }
-
-    static void makePost(String header, String content) {
-        // command followed by the message subject and the message content or main body to post a message to the board. 
-    }
-
-    static void viewUsers() {
-        // command to retrieve a list of users in the same group. 
-    }
-
-    static void leavePublic() {
-        // command to leave the group. 
-    }
-
-    static void seeMessage(int messageID){
-        // command followed by message ID to retrieve the content of the message. 
-    }
-
-    static void disconnect(){
-        // command to disconnect from the server and exit the client program.
-    }
-
-    // PRIVATE REQUIREMENTS //
-    static void groupList() {
-        // retrieve a list of all groups that can be joined. 
-    }
-
-    static void groupJoin(){
-        // command followed by the group id/name to join a specific group. 
-    }
-
-    static void groupPost(int groupID, String header, String content){
-        //command followed by the group id/name, the message subject, and the message content or main body to post a message to a message board owned by a specific group. 
-    }
-
-    static void groupUsers(int groupID) {
-        //command followed by the group id/name to retrieve a list of users in the given group. 
-    }
-
-    static void groupLeave(int groupID) {
-        // command followed by the group id/name to leave a specific group. 
-    }
-
-    static void groupSeeMessage(int groupID, int messageID) {
-
     }
 
     static void helpClient() {

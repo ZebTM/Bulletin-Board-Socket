@@ -4,6 +4,7 @@ import java.io.* ;
 import java.net.* ;
 import java.util.* ;
 
+import com.networking.group.Client.WebClient;
 import com.networking.group.Server.WebServer;
 
 public final class ClientHandler implements Runnable {
@@ -58,23 +59,53 @@ public final class ClientHandler implements Runnable {
                     WebServer.publicGroups.get(1).AddUser(this.user);
                     clientWriter.writeBytes("Welcome to the public board " + userID + CRLF);
                     break;
-                case "users":
-                    System.out.println(userID + " wants to see users");
-                    break;
-                case "leave":
-                    System.out.println(userID + " wants to leave board");
-                    break;
-                case "exit":
-                    System.out.println(userID + " wants to see exit application");
-                    break;
                 case "makepost":
                     System.out.println(userID + " wants to see make a post");
                     String subject = clientReader.readLine();
                     String message = clientReader.readLine();
-                    Group publicGroup = WebServer.publicGroups.get(1);
+                    Group publicGroup = WebServer.publicGroups.get(0);
                     if (publicGroup.IsUserInGroup(user.UserID)) {
                         publicGroup.SendMessageToUsers(new Message(UUID.randomUUID(), subject, message, user));
                     };
+                case "viewusers":
+                    Collection allUsers = WebServer.totalUsers.values();
+                    clientWriter.writeBytes("All current users for public board: " + allUsers + CRLF);
+                    break;
+                case "leavepublic":
+                    WebServer.publicGroups.get(0).RemoveUser(userID);
+                    clientWriter.writeBytes(userID + "left the public board" + CRLF);
+                    break;
+                case "seemessage":
+                    // Needs user to pull exisiting messages
+                case "grouplist":
+                    Collection allGroups = WebServer.publicGroups.values();
+                    clientWriter.writeBytes("All current message boards: " + allGroups + CRLF);
+                case "groupjoin":
+                    // Joins a private group
+                    clientWriter.writeBytes("What private board you would like to join (numbers 1-5)" + CRLF);
+                    int requestedGroup = Integer.parseInt(clientReader.readLine());
+                    WebServer.publicGroups.get(requestedGroup).AddUser(this.user);
+                    clientWriter.writeBytes("Welcome to private board " + requestedGroup + " " + userID + CRLF);
+                case "grouppost":
+                    // Send a post to the private group
+                    clientWriter.writeBytes("What message board would you like to make a post to? (numbers 1-5)" + CRLF);
+                    int groupNumber = Integer.parseInt(clientReader.readLine());
+                    System.out.println(userID + " wants to see make a post");
+                    String sub = clientReader.readLine();
+                    String mess = clientReader.readLine();
+                    Group postGroup = WebServer.publicGroups.get(groupNumber);
+                    if (postGroup.IsUserInGroup(user.UserID)) {
+                        postGroup.SendMessageToUsers(new Message(UUID.randomUUID(), sub, mess, user));
+                    };
+                case "groupusers":
+                    // Lists users in private group
+                case "groupleave":
+                    clientWriter.writeBytes("What message board would you like to leave? (numbers 1-5)" + CRLF);
+                    int leaveNumber = Integer.parseInt(clientReader.readLine());
+                    WebServer.publicGroups.get(leaveNumber).RemoveUser(userID);
+                    clientWriter.writeBytes(userID + "left the public board" + CRLF);
+                case "groupseemessage":
+                    // Sees message within private grup
                 default:
                     break;
             } 

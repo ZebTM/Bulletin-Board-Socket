@@ -23,7 +23,13 @@ public final class WebServer
         publicGroups = new ConcurrentHashMap<Integer, Group>();
         totalUsers = new ConcurrentHashMap<String, User>();
         // set groups here
-        publicGroups.put(1, new Group("Public"));
+        publicGroups.put(0, new Group("Public"));
+        publicGroups.put(1, new Group("Private 1")); 
+        publicGroups.put(2, new Group("Private 2")); 
+        publicGroups.put(3, new Group("Private 3"));
+        publicGroups.put(4, new Group("Private 4")); 
+        publicGroups.put(5, new Group("Private 5"));
+
 
         // Establish the listen socket.
         ServerSocket serverSocket = new ServerSocket( port);
