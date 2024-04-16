@@ -2,11 +2,9 @@ package com.networking.group;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.StringTokenizer;
-import java.util.Scanner; 
 
 /**
  * Hello world!
@@ -55,10 +53,6 @@ public class WebClient
                 tokenizer = new StringTokenizer(fullCommand);
                 command = tokenizer.nextToken().toUpperCase();
                 switch (command) {
-<<<<<<< HEAD
-                    case "CONNECT":
-                            
-=======
                     case "/CONNECT":
                         System.out.println("Enter server address: ");
                         String serverAddress = terminalReader.readLine();
@@ -69,54 +63,56 @@ public class WebClient
                         connectServer(goofySocket);
                         break;
                     case "/JOINPUBLIC":
-
->>>>>>> f5365e7fcb20af8cc0ba145a204f1697834484dc
+                        serverWriter.writeBytes("joinpublic" + CRLF);
                         break;
                     case "/MAKEPOST":
-
+                        serverWriter.writeBytes("makepost" + CRLF);
                         break;
                     case "/VIEWUSERS":
-
+                        serverWriter.writeBytes("makepost" + CRLF);
                         break;
                     case "/LEAVEPUBLIC":
-
+                        serverWriter.writeBytes("makepost" + CRLF);
                         break;
                     case "/SEEMESSAGE":
-
+                        serverWriter.writeBytes("makepost" + CRLF);
                         break;
                     case "/DISCONNECT":
-
+                        serverReader.close();
+                        serverWriter.close();
+                        serverSocket.close();
                         break;
                     case "/GROUPLIST":
-
+                        serverWriter.writeBytes("makepost" + CRLF);
                         break;
                     case "/GROUPJOIN":
-
+                        serverWriter.writeBytes("makepost" + CRLF);
                         break;
                     case "/GROUPPOST":
-
+                        serverWriter.writeBytes("makepost" + CRLF);
                         break;
                     case "/GROUPUSERS":
-
+                        serverWriter.writeBytes("makepost" + CRLF);
                         break;
                     case "/GROUPLEAVE":
-
+                        serverWriter.writeBytes("makepost" + CRLF);
                         break;
                     case "/GROUPSEEMESSAGE":
-
+                        serverWriter.writeBytes("groupseemessage" + CRLF);
                         break;
                     case "HELP":
                         helpClient();
                         break;
                 }
                 
-                System.out.println(tokenizer.nextToken());
-                System.out.println(tokenizer.nextToken());
+                // System.out.println(tokenizer.nextToken());
+                // System.out.println(tokenizer.nextToken());
                 
             }
 
         } catch (Exception e) {
             System.out.println(e.getStackTrace());
+            
         }
     }
 

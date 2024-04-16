@@ -33,6 +33,7 @@ public final class ClientHandler implements Runnable {
 
     private void processRequest() throws Exception
     {
+        // Initial Setup
         BufferedReader clientReader = this.clientReader;
         DataOutputStream clientWriter = this.clientWriter;
 
@@ -48,7 +49,7 @@ public final class ClientHandler implements Runnable {
 
         
 
-        
+        // Actual commands here
 
         while (socket.isConnected()) {
             String commandInfo = clientReader.readLine();
@@ -58,7 +59,8 @@ public final class ClientHandler implements Runnable {
             String commandName = tokens.nextToken().toLowerCase();
 
             switch (commandName) {
-
+                // case: "JOINPUBLIC":
+                //     String parseVarO = commandInfo
                 default:
                     break;
             } 
