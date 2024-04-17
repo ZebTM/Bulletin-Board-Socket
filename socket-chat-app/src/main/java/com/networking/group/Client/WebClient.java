@@ -108,7 +108,6 @@ public class WebClient
                     case "/GROUPJOIN":
                         if (isConnected) {
                             serverWriter.writeBytes("groupjoin" + CRLF);
-                            System.out.println("What is the group ID?\n");
                             String response = terminalReader.readLine();
                             serverWriter.writeBytes(response + CRLF);
                         } else {
@@ -118,7 +117,6 @@ public class WebClient
                     case "/GROUPPOST":
                         if (isConnected) {
                             serverWriter.writeBytes("grouppost" + CRLF);
-                            System.out.println("What is the group ID?\n");
                             String groupID = terminalReader.readLine();
                             serverWriter.writeBytes(groupID + CRLF);
                             sendMessage();
@@ -129,7 +127,7 @@ public class WebClient
                     case "/GROUPUSERS":
                         if (isConnected) {
                             serverWriter.writeBytes("groupusers" + CRLF);
-                            System.out.println("What is the group ID?\n");
+                            // System.out.println("What is the group ID?\n");
                             String response = terminalReader.readLine();
                             serverWriter.writeBytes(response + CRLF);
                         } else {
@@ -147,9 +145,11 @@ public class WebClient
                     case "/GROUPSEEMESSAGE":
                         if (isConnected) {
                             serverWriter.writeBytes("groupseemessage" + CRLF);
-                            System.out.println("What is the message ID?\n");
-                            String response = terminalReader.readLine();
-                            serverWriter.writeBytes(response + CRLF);
+                            String groupId = terminalReader.readLine();
+                            
+                            serverWriter.writeBytes(groupId + CRLF);
+                            String messageId = terminalReader.readLine();
+                            serverWriter.writeBytes(messageId + CRLF);
                         } else {
                             System.out.println("Please connect before running any other commands");
                         }

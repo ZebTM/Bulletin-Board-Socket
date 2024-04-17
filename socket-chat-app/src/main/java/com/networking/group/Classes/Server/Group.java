@@ -14,7 +14,7 @@ public class Group {
     private ConcurrentHashMap<UUID, Message> SentMessages;
     private Message secondToLastMessage;
     private Message lastMessage;
-    private Integer Id;
+    public Integer Id;
 
     public Group(String name, Integer id) {
         Name = name;

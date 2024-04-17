@@ -104,70 +104,96 @@ public final class ClientHandler implements Runnable {
                         Collection<Group> allGroups = WebServer.publicGroups.values();
                         clientWriter.writeBytes("All current message boards: \n");
                         for (Group group : allGroups) {
-                            clientWriter.writeBytes("\t -" + group.Name + "\n");
+                            clientWriter.writeBytes("\t -" + group.Name + " ID: " + group.Id + "\n");
                         }
                         clientWriter.writeBytes(CRLF);
 
                         break;
                     case "groupjoin":
                         // Joins a private group
-                        clientWriter.writeBytes("What private board you would like to join (numbers 1-5)" + CRLF);
-                        int requestedGroup = Integer.parseInt(clientReader.readLine());
-                        Group privateGroup = WebServer.publicGroups.get(requestedGroup);
-                        privateGroup.AddUser(this.user);
-                        clientWriter.writeBytes("Welcome to private board " + privateGroup.Name + " " + userID + CRLF);
-                        privateGroup.SendStatusMessageToUsers("User " + userID + " has join the group " + privateGroup.Name + "\n" + CRLF);
+                        clientWriter.writeBytes("What message board would you like to join? (numbers 1-5)" + CRLF);
+                        try {
+                            int requestedGroup = Integer.parseInt(clientReader.readLine());
+                            Group privateGroup = WebServer.publicGroups.get(requestedGroup);
+                            privateGroup.AddUser(this.user);
+                            clientWriter.writeBytes("Welcome to private board " + privateGroup.Name + " " + userID + CRLF);
+                            privateGroup.SendStatusMessageToUsers("User " + userID + " has join the group " + privateGroup.Name + "\n" + CRLF);
+                            privateGroup.SendLastTwoMessagesToUser(userID);
+                        } catch (NumberFormatException exception) {
+                            clientWriter.writeBytes("Error number not entered" + CRLF);
+                        };
                         break;
                     case "grouppost":
                         // Send a post to the private group
                         clientWriter.writeBytes("What message board would you like to make a post to? (numbers 1-5)" + CRLF);
-                        int groupNumber = Integer.parseInt(clientReader.readLine());
-                        System.out.println(userID + " wants to see make a post");
-                        String sub = clientReader.readLine();
-                        String mess = clientReader.readLine();
-                        Group postGroup = WebServer.publicGroups.get(groupNumber);
-                        if (postGroup.IsUserInGroup(user.UserID)) {
-                            postGroup.SendMessageToUsers(new Message(UUID.randomUUID(), sub, mess, user));
+                        try {
+                            int groupNumber = Integer.parseInt(clientReader.readLine());
+                            System.out.println(userID + " wants to see make a post");
+                            String sub = clientReader.readLine();
+                            String mess = clientReader.readLine();
+                            Group postGroup = WebServer.publicGroups.get(groupNumber);
+                            if (postGroup.IsUserInGroup(user.UserID)) {
+                                postGroup.AddMessage(new Message(UUID.randomUUID(), sub, mess, user));
+                            } else{
+                                clientWriter.writeBytes("Error cannont write to group you are not in" + CRLF);
+                            };
+                        } catch (NumberFormatException exception) {
+                            clientWriter.writeBytes("Error number not entered" + CRLF);
                         };
+                        
+                        
 
                         break;
                     case "groupusers":
                         // Lists users in private group
-                        clientWriter.writeBytes("What message board would you like to see the users of? (numbers 1-5)" + CRLF);
-                        groupNumber = Integer.parseInt(clientReader.readLine());
-                        userGroup = WebServer.publicGroups.get(groupNumber);
-                        allUsers = userGroup.GetAllUsers();
-                        clientWriter.writeBytes("All current users for private board: " + userGroup.Name + "\n");
-                        for(User user : allUsers) {
-                            clientWriter.writeBytes("\t - " + user.UserID);
+                        try {
+                            clientWriter.writeBytes("What message board would you like to see the users of? (numbers 1-5)" + CRLF);
+                            Integer groupNumber = Integer.parseInt(clientReader.readLine());
+                            userGroup = WebServer.publicGroups.get(groupNumber);
+                            allUsers = userGroup.GetAllUsers();
+                            clientWriter.writeBytes("All current users for private board: " + userGroup.Name + "\n");
+                            for(User user : allUsers) {
+                                clientWriter.writeBytes("\t - " + user.UserID);
+                            };
+                            clientWriter.writeBytes(CRLF);
+                        } catch (NumberFormatException exception) {
+                            clientWriter.writeBytes("Error number not entered" + CRLF);
                         };
-                        clientWriter.writeBytes(CRLF);
                         break;
                     case "groupleave":
                         clientWriter.writeBytes("What message board would you like to leave? (numbers 1-5)" + CRLF);
-                        int leaveNumber = Integer.parseInt(clientReader.readLine());
-                        WebServer.publicGroups.get(leaveNumber).RemoveUser(userID);
-                        clientWriter.writeBytes(userID + "left the public board" + CRLF);
-
+                        try {
+                            int leaveNumber = Integer.parseInt(clientReader.readLine());
+                            Group privateGroup = WebServer.publicGroups.get(leaveNumber);
+                            privateGroup.RemoveUser(userID);
+                            clientWriter.writeBytes(userID + "left the private board " + privateGroup.Name + CRLF);
+                        } catch (NumberFormatException exception) {
+                            clientWriter.writeBytes("Error number not entered" + CRLF);
+                        };
                         break;
                     case "groupseemessage":
                         // Sees message within private grup
-                        clientWriter.writeBytes("What message board would you like to send a message in? (numbers 1-5)" + CRLF);
-                        groupNumber = Integer.parseInt(clientReader.readLine());
-                        messageId = UUID.fromString(clientReader.readLine());
-                        messageGroup = WebServer.publicGroups.get(groupNumber);
-                        m = messageGroup.GetAllMessages();
-                        requestedMessage = messageGroup.GetMessage(messageId);
-                        if (requestedMessage == null) {
-                            clientWriter.writeBytes("Message does not exist" + CRLF);
-                        } else {
-                            clientWriter.writeBytes(requestedMessage.ConvertMessageToRequestMessage() + CRLF);
-                        }
-                        
+                        clientWriter.writeBytes("What group is the message in (numbers 1-5)" + CRLF);
+                        try {
+                            Integer groupNumber = Integer.parseInt(clientReader.readLine());
+                            clientWriter.writeBytes("What is the message ID" + CRLF);
+                            messageId = UUID.fromString(clientReader.readLine());
+                            messageGroup = WebServer.publicGroups.get(groupNumber);
+                            
+                            requestedMessage = messageGroup.GetMessage(messageId);
+                            if (requestedMessage == null) {
+                                clientWriter.writeBytes("Message does not exist" + CRLF);
+                            } else {
+                                clientWriter.writeBytes(requestedMessage.ConvertMessageToRequestMessage() + CRLF);
+                            }
+                        } catch (NumberFormatException exception) {
+                            clientWriter.writeBytes("Error number not entered" + CRLF);
+                        };
                         break;
 
                     case "disconnect":
                         // Sees message within private grup
+                        clientWriter.writeBytes("Disconnecting" + CRLF);
                         Collection<Group> groups = WebServer.publicGroups.values();
                         for ( Group group : groups) {
                             group.RemoveUser(userID);
