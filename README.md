@@ -1,6 +1,18 @@
 # Bulletin-Board-Socket
 This project is brought to you by by Sam Puffer, Zach Brown, Caleb Copley
 
+How to Run:
+Server - 
+    Go to WebServer.java
+        - Located at socket-chat-app\src\main\java\com\networking\group\Server\WebServer.java
+        - If you have VSCODE and can run the Java from command or for windows
+        - & 'pathToJava.exe' 'pathToArgFile' 'com.networking.group.Server.WebServer'
+Client
+    Go to WebClient.java
+        - Located at socket-chat-app\src\main\java\com\networking\group\Client\WebClient.java
+        - If you have VSCODE and can run the Java from command or for windows
+        - & 'pathToJava.exe' 'pathToArgFile' 'com.networking.group.Client.WebClient'
+
 FOR THE GRADER{
 The following commands have been renamed for the purposes of clarity and brevity. Each one is prefaced by a "/" for clarity and intent.
     - /connect
