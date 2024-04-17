@@ -61,6 +61,12 @@ public final class ClientHandler implements Runnable {
                         clientWriter.writeBytes("Welcome to the public board " + userID + CRLF);
                         userGroup.SendStatusMessageToUsers("User " + userID + " has join the group " + userGroup.Name + "\n" + CRLF);
                         userGroup.SendLastTwoMessagesToUser(userID);
+                        Collection<User> allUsers = WebServer.publicGroups.get(0).GetAllUsers();
+                        clientWriter.writeBytes("All current users for public board: \n");
+                        for(User user : allUsers) {
+                            clientWriter.writeBytes("\t - " + user.UserID + "\n");
+                        };
+                        clientWriter.writeBytes(CRLF);
                         break;
                     case "makepost":
                         System.out.println(userID + " wants to see make a post");
@@ -75,7 +81,7 @@ public final class ClientHandler implements Runnable {
 
                         break;
                     case "viewusers":
-                        Collection<User> allUsers = WebServer.publicGroups.get(0).GetAllUsers();
+                        allUsers = WebServer.publicGroups.get(0).GetAllUsers();
                         clientWriter.writeBytes("All current users for public board: \n");
                         for(User user : allUsers) {
                             clientWriter.writeBytes("\t - " + user.UserID + "\n");
@@ -148,14 +154,19 @@ public final class ClientHandler implements Runnable {
                         // Lists users in private group
                         try {
                             clientWriter.writeBytes("What message board would you like to see the users of? (numbers 1-5)" + CRLF);
+                            
                             Integer groupNumber = Integer.parseInt(clientReader.readLine());
                             userGroup = WebServer.publicGroups.get(groupNumber);
-                            allUsers = userGroup.GetAllUsers();
-                            clientWriter.writeBytes("All current users for private board: " + userGroup.Name + "\n");
-                            for(User user : allUsers) {
-                                clientWriter.writeBytes("\t - " + user.UserID);
-                            };
-                            clientWriter.writeBytes(CRLF);
+                            if (userGroup.IsUserInGroup(userID)) {
+                                allUsers = userGroup.GetAllUsers();
+                                clientWriter.writeBytes("All current users for private board: " + userGroup.Name + "\n");
+                                for(User user : allUsers) {
+                                    clientWriter.writeBytes("\t - " + user.UserID);
+                                };
+                                clientWriter.writeBytes(CRLF);
+                            } else {
+                                clientWriter.writeBytes("You don't belong to this group" + CRLF);
+                            }
                         } catch (NumberFormatException exception) {
                             clientWriter.writeBytes("Error number not entered" + CRLF);
                         };

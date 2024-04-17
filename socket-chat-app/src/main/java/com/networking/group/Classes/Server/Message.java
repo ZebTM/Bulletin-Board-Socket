@@ -20,7 +20,7 @@ public class Message {
 
     public String ConvertMessageToChatMessage() {
        
-        return "ID: " + this.Id + "\nSubject: " + this.Subject + "\nSender: " + this.Sender.UserID + "\n" + "Sent Time: " + Time.toString() + "\n";
+        return "ID: " + this.Id +  "\nSender: " + this.Sender.UserID + "\n" + "Subject: " + this.Subject + "\n" + "Sent Time: " + Time.toString() + "\n";
     }
 
     public String ConvertMessageToRequestMessage() {
