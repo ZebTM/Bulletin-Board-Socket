@@ -152,7 +152,18 @@ public final class ClientHandler implements Runnable {
                         break;
                     case "groupseemessage":
                         // Sees message within private grup
-
+                        clientWriter.writeBytes("What message board would you like to send a message in? (numbers 1-5)" + CRLF);
+                        groupNumber = Integer.parseInt(clientReader.readLine());
+                        messageId = UUID.fromString(clientReader.readLine());
+                        messageGroup = WebServer.publicGroups.get(groupNumber);
+                        m = messageGroup.GetAllMessages();
+                        requestedMessage = messageGroup.GetMessage(messageId);
+                        if (requestedMessage == null) {
+                            clientWriter.writeBytes("Message does not exist" + CRLF);
+                        } else {
+                            clientWriter.writeBytes(requestedMessage.ConvertMessageToRequestMessage() + CRLF);
+                        }
+                        
                         break;
 
                     case "disconnect":

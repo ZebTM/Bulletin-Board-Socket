@@ -208,7 +208,7 @@ public class WebClient
         String acceptedUsername = serverReader.readLine();
         
         
-        while (acceptedUsername.equals("true" + CRLF)) {
+        while (acceptedUsername != "true") {
             System.out.println("Sorry User ID is already taken \n");
             System.out.println("Enter User ID: ");
             userID = terminalReader.readLine();
