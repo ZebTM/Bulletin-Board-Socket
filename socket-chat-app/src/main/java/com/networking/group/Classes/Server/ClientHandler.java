@@ -78,13 +78,13 @@ public final class ClientHandler implements Runnable {
                         Collection<User> allUsers = WebServer.publicGroups.get(0).GetAllUsers();
                         clientWriter.writeBytes("All current users for public board: \n");
                         for(User user : allUsers) {
-                            clientWriter.writeBytes("\t - " + user.UserID);
+                            clientWriter.writeBytes("\t - " + user.UserID + "\n");
                         };
                         clientWriter.writeBytes(CRLF);
                         break;
                     case "leavepublic":
                         WebServer.publicGroups.get(0).RemoveUser(userID);
-                        clientWriter.writeBytes(userID + "left the public board" + CRLF);
+                        clientWriter.writeBytes(userID + " left the public board" + CRLF);
                         break;
                     case "seemessage":
                         // Needs user to pull exisiting messages
@@ -187,6 +187,7 @@ public final class ClientHandler implements Runnable {
                     group.RemoveUser(user.UserID);
                 };
             }
+            WebServer.totalUsers.remove(user.UserID);
         }
 
         closeSocketAndStreams();
