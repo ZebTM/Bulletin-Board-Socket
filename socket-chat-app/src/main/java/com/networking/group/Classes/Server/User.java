@@ -19,4 +19,12 @@ public class User {
             System.out.println(exception);
         }
     }
+
+    public void PublishStatusToUser(String message) {
+        try {
+            clientWriter.writeBytes(message + CRLF);
+        } catch ( IOException exception) {
+            System.out.println(exception);
+        }
+    }
 }

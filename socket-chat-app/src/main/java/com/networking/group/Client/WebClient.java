@@ -2,6 +2,7 @@ package com.networking.group.Client;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.StringTokenizer;
@@ -20,60 +21,22 @@ public class WebClient
     static DataOutputStream serverWriter;
     static Boolean isConnected = false;
     static Thread readerThread;
+    static BufferedReader terminalReader;
     public static void main( String[] args )
     {
         try {
-            BufferedReader terminalReader = new BufferedReader(new InputStreamReader(System.in));
-            
-            
-            
-            String fullCommand;
-            StringTokenizer tokenizer;
+            terminalReader = new BufferedReader(new InputStreamReader(System.in));
             String command;
             Boolean active = true;
+            
             helpClient();
+            
             while (active) {
-                fullCommand = terminalReader.readLine() + CRLF;
-
-                tokenizer = new StringTokenizer(fullCommand);
-                command = tokenizer.nextToken().toUpperCase();
+                command = terminalReader.readLine().toUpperCase();
                 switch (command) {
                     case "/CONNECT":
                         if (!isConnected) {
-                            System.out.println("Enter server address: ");
-                            String serverAddress = terminalReader.readLine();
-                            System.out.println("Enter server port number: ");
-                            String serverPort = terminalReader.readLine();
-                            Integer number = Integer.valueOf(serverPort);
-                            serverSocket = new Socket(serverAddress, number);
-                            // connectServer(goofySocket);
-
-                            serverReader = new BufferedReader( new InputStreamReader( serverSocket.getInputStream() ));
-                            serverWriter = new DataOutputStream( serverSocket.getOutputStream() );
-
-                            System.out.println("Enter User ID: ");
-                            String userID = terminalReader.readLine();
-                            
-
-                            serverWriter.writeBytes(userID + CRLF);
-
-                            String acceptedUsername = serverReader.readLine();
-                            
-                            
-                            while (acceptedUsername.equals("true" + CRLF)) {
-                                System.out.println("Sorry User ID is already taken \n");
-                                System.out.println("Enter User ID: ");
-                                userID = terminalReader.readLine();
-                    
-                                serverWriter.writeBytes(userID + CRLF);
-                    
-                                acceptedUsername = serverReader.readLine();
-                            }
-                            System.out.println("User login succesful " + userID + "\n");
-                            readerThread = new Thread(new ReaderClientHelper(serverReader));
-                            readerThread.start();
-                            isConnected = true;
-                            
+                            setUsername();
                         } else {
                             System.out.println("Please only connect to one server at a time");
                         }
@@ -89,12 +52,7 @@ public class WebClient
                     case "/MAKEPOST":
                         if (isConnected) {
                             serverWriter.writeBytes("makepost" + CRLF);
-                            System.out.println("Please enter your subject");
-                            String subject = terminalReader.readLine();
-                            System.out.println("Please enter your message");
-                            String message = terminalReader.readLine();
-                            serverWriter.writeBytes(subject + CRLF);
-                            serverWriter.writeBytes(message + CRLF);
+                            sendMessage();
                         } else {
                             System.out.println("Please connect before running any other commands");
                         }
@@ -128,6 +86,7 @@ public class WebClient
                         break;
                     case "/DISCONNECT":
                         if (isConnected) {
+                            serverWriter.writeBytes("disconnect" + CRLF);
                             serverReader.close();
                             serverWriter.close();
                             serverSocket.close();
@@ -139,6 +98,9 @@ public class WebClient
                     case "/GROUPLIST":
                         if (isConnected) {
                             serverWriter.writeBytes("grouplist" + CRLF);
+                            System.out.println("What is the group ID?\n");
+                            String response = terminalReader.readLine();
+                            serverWriter.writeBytes(response + CRLF);
                         } else {
                             System.out.println("Please connect before running any other commands");
                         }
@@ -146,6 +108,9 @@ public class WebClient
                     case "/GROUPJOIN":
                         if (isConnected) {
                             serverWriter.writeBytes("groupjoin" + CRLF);
+                            System.out.println("What is the group ID?\n");
+                            String response = terminalReader.readLine();
+                            serverWriter.writeBytes(response + CRLF);
                         } else {
                             System.out.println("Please connect before running any other commands");
                         }
@@ -153,6 +118,10 @@ public class WebClient
                     case "/GROUPPOST":
                         if (isConnected) {
                             serverWriter.writeBytes("grouppost" + CRLF);
+                            System.out.println("What is the group ID?\n");
+                            String groupID = terminalReader.readLine();
+                            serverWriter.writeBytes(groupID + CRLF);
+                            sendMessage();
                         } else {
                             System.out.println("Please connect before running any other commands");
                         }
@@ -160,6 +129,9 @@ public class WebClient
                     case "/GROUPUSERS":
                         if (isConnected) {
                             serverWriter.writeBytes("groupusers" + CRLF);
+                            System.out.println("What is the group ID?\n");
+                            String response = terminalReader.readLine();
+                            serverWriter.writeBytes(response + CRLF);
                         } else {
                             System.out.println("Please connect before running any other commands");
                         }
@@ -167,11 +139,17 @@ public class WebClient
                     case "/GROUPLEAVE":
                         if (isConnected) {
                             serverWriter.writeBytes("groupleave" + CRLF);
+                            System.out.println("What is the group ID?\n");
+                            String response = terminalReader.readLine();
+                            serverWriter.writeBytes(response + CRLF);
                         }   
                         break;
                     case "/GROUPSEEMESSAGE":
                         if (isConnected) {
                             serverWriter.writeBytes("groupseemessage" + CRLF);
+                            System.out.println("What is the message ID?\n");
+                            String response = terminalReader.readLine();
+                            serverWriter.writeBytes(response + CRLF);
                         } else {
                             System.out.println("Please connect before running any other commands");
                         }
@@ -179,6 +157,10 @@ public class WebClient
                     case "HELP":
                         helpClient();
                         break;
+                    case "":
+                        break;
+                    default:
+                        System.out.println("Please enter a supported commmand");
                 }
             }
 
@@ -203,6 +185,51 @@ public class WebClient
         System.out.println("/groupUsers - command followed by the group id/name to retrieve a list of users in the given group. ");
         System.out.println("/groupLeave - command followed by the group id/name to leave a specific group.");
         System.out.println("/groupSeeMessage - command followed by the group id/name and message ID to retrieve the content of the message posted earlier on a message board owned by a specific group.");
+    }
+
+    static void setUsername() throws IOException {
+        System.out.println("Enter server address: ");
+        String serverAddress = terminalReader.readLine();
+        System.out.println("Enter server port number: ");
+        String serverPort = terminalReader.readLine();
+        Integer number = Integer.valueOf(serverPort);
+        serverSocket = new Socket(serverAddress, number);
+        // connectServer(goofySocket);
+
+        serverReader = new BufferedReader( new InputStreamReader( serverSocket.getInputStream() ));
+        serverWriter = new DataOutputStream( serverSocket.getOutputStream() );
+
+        System.out.println("Enter User ID: ");
+        String userID = terminalReader.readLine();
+        
+
+        serverWriter.writeBytes(userID + CRLF);
+
+        String acceptedUsername = serverReader.readLine();
+        
+        
+        while (acceptedUsername.equals("true" + CRLF)) {
+            System.out.println("Sorry User ID is already taken \n");
+            System.out.println("Enter User ID: ");
+            userID = terminalReader.readLine();
+
+            serverWriter.writeBytes(userID + CRLF);
+
+            acceptedUsername = serverReader.readLine();
+        }
+        System.out.println("User login succesful " + userID + "\n");
+        readerThread = new Thread(new ReaderClientHelper(serverReader));
+        readerThread.start();
+        isConnected = true;
+    }
+
+    static void sendMessage() throws IOException {
+        System.out.println("Please enter your subject");
+        String subject = terminalReader.readLine();
+        System.out.println("Please enter your message");
+        String message = terminalReader.readLine();
+        serverWriter.writeBytes(subject + CRLF);
+        serverWriter.writeBytes(message + CRLF);
     }
 }
 

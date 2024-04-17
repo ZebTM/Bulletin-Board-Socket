@@ -2,7 +2,6 @@ package com.networking.group.Classes.Server;
 
 import java.util.Date;
 import java.util.UUID;
-import com.google.gson.*;
 
 public class Message {
     public UUID Id;
@@ -21,6 +20,10 @@ public class Message {
 
     public String ConvertMessageToChatMessage() {
        
-        return "ID: " + this.Id + "\nSubject: " + this.Subject + "\nSender: " + this.Sender.UserID + "\n";
+        return "ID: " + this.Id + "\nSubject: " + this.Subject + "\nSender: " + this.Sender.UserID + "\n" + "Sent Time: " + Time.toString() + "\n";
+    }
+
+    public String ConvertMessageToRequestMessage() {
+        return "ID: " + this.Id + "\nSubject: " + this.Subject + "\nSender: " + this.Sender.UserID + "\n" + "Sent Time: " + Time.toString() + "\n" + "Message: \n" + this.Message;
     }
 }
